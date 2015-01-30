@@ -1,4 +1,4 @@
-Dockerfile.erb
+Dockerfile.erb - use ruby in your dynamic Dockerfile
 
 Install
 =======
@@ -7,12 +7,17 @@ Install
 gem install dockerb
 ```
 
+or standalone
+```Bash
+curl https://rubinjam.herokuapp.com/pack/dockerb > dockerb && chmod +x dockerb
+```
+
 Usage
 =====
 
-```Ruby
-CODE EXAMPLE
-```
+`docker` -> `dockerb` ... everything else works like before
+
+Dockerfile will be generated, you should delete it and not commit it.
 
 Author
 ======
