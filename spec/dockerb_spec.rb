@@ -67,18 +67,26 @@ describe Dockerb do
     end
 
     def dockerb(command, options={})
-      sh("PATH=#{Bundler.root}/spec:#{ENV["PATH"]} #{Bundler.root}/bin/dockerb #{command}", options)
+      sh("#{Bundler.root}/bin/dockerb #{command}", options)
     end
 
-    it "runs as docker would" do
-      dockerb("x y z").should == "GOT x y z\n"
-      File.exist?("Dockerfile").should == false
+    it "shows --version" do
+      dockerb("--version").should include(Dockerb::VERSION)
+    end
+
+    it "shows --help" do
+      dockerb("--help").should include("dynamic Dockerfile")
     end
 
     it "generates a Dockerfile" do
       File.write("Dockerfile.erb", "<%= 1 + 2 %>")
-      dockerb("x y z").should == "GOT x y z\n"
+      dockerb("")
       File.read("Dockerfile").should == "3"
+    end
+
+    it "is silent without Dockerfile" do
+      dockerb("")
+      File.exist?("Dockerfile").should == false
     end
   end
 end

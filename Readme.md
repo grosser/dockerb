@@ -15,9 +15,8 @@ curl https://rubinjam.herokuapp.com/pack/dockerb > dockerb && chmod +x dockerb
 Usage
 =====
 
-`docker` -> `dockerb` ... everything else works like before
-
-Dockerfile will be generated, you should delete it and not commit it.
+`docker` generates a `Dockerfile` from your `Dockerfile.erb`
+(delete it after building / do not commit it)
 
 ### custom
 
