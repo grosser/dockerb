@@ -43,13 +43,13 @@ describe Dockerb do
           ADD Gemfile /app/
           ADD Gemfile.lock /app/
           ADD vendor/cache /app/vendor/cache
-          RUN bundle install --quiet --local --jobs 4 || bundle check
+          RUN (bundle install --quiet --local --jobs 4 || bundle check) && find /usr/local/lib/ruby/gems/*/gems/ -maxdepth 2 -name "ext" -o -name "test" -o -name "spec" | xargs rm -r
         EOF
       end
 
       it "generates gem install commands" do
         File.write("Gemfile.lock", "  nokogiri (~> 1.2.3)\n      nokogiri (2.3.4)\n    nokogiri (3.4.5)")
-        call("<%= install_gem 'nokogiri' %>").should == "RUN gem install -v 3.4.5 nokogiri"
+        call("<%= install_gem 'nokogiri' %>").should == %{RUN gem install -v 3.4.5 nokogiri && find /usr/local/lib/ruby/gems/*/gems/ -maxdepth 2 -name "ext" -o -name "test" -o -name "spec" | xargs rm -r}
       end
 
       it "fails when it cannot find a gem in the Gemfile.lock" do
