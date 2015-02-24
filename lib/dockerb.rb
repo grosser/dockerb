@@ -30,9 +30,10 @@ module Dockerb
         EOF
       end
 
-      def install_gem(name)
+      def install_gem(name, options=nil)
+        options = " " << options if options
         version = File.read("Gemfile.lock")[/^    #{name} \((.+)\)/, 1] || raise("Gem #{name} not found in Gemfile.lock")
-        "RUN gem install -v #{version} #{name} && #{delete_gem_junk}"
+        "RUN gem install -v #{version} #{name}#{options} && #{delete_gem_junk}"
       end
 
       # lower image size by not shipping test/spec/ext files
