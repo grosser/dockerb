@@ -49,12 +49,12 @@ describe Dockerb do
 
       it "generates gem install commands" do
         File.write("Gemfile.lock", "  nokogiri (~> 1.2.3)\n      nokogiri (2.3.4)\n    nokogiri (3.4.5)")
-        call("<%= install_gem 'nokogiri' %>").should == %{RUN gem install -v 3.4.5 nokogiri && find /usr/local/lib/ruby/gems/*/gems/ -maxdepth 2 -name "ext" -o -name "test" -o -name "spec" | xargs rm -r}
+        call("<%= install_gem 'nokogiri' %>").should == %{RUN gem install -v 3.4.5 nokogiri && find /usr/local/lib/ruby/gems/*/gems/ -maxdepth 2 -o -name "test" -o -name "spec" | xargs rm -r}
       end
 
       it "generates gem install command with args" do
         File.write("Gemfile.lock", "  nokogiri (~> 1.2.3)\n      nokogiri (2.3.4)\n    nokogiri (3.4.5)")
-        call("<%= install_gem 'nokogiri', '--foobar' %>").should == %{RUN gem install -v 3.4.5 nokogiri --foobar && find /usr/local/lib/ruby/gems/*/gems/ -maxdepth 2 -name "ext" -o -name "test" -o -name "spec" | xargs rm -r}
+        call("<%= install_gem 'nokogiri', '--foobar' %>").should == %{RUN gem install -v 3.4.5 nokogiri --foobar && find /usr/local/lib/ruby/gems/*/gems/ -maxdepth 2 -o -name "test" -o -name "spec" | xargs rm -r}
       end
 
       it "fails when it cannot find a gem in the Gemfile.lock" do
