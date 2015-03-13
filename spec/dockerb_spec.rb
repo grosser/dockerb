@@ -39,22 +39,22 @@ describe Dockerb do
       end
 
       it "can generate bundler template" do
-        call("<%= bundle %>").should == <<-EOF.gsub(/^          /, "")
+        call("<%= bundle %>").sub(/ find .*/, " find").should == <<-EOF.gsub(/^          /, "")
           ADD Gemfile /app/
           ADD Gemfile.lock /app/
           ADD vendor/cache /app/vendor/cache
-          RUN (bundle install --quiet --local --jobs 4 || bundle check) && find /usr/local/lib/ruby/gems/*/gems/ -maxdepth 2 -name "ext" -o -name "test" -o -name "spec" | xargs rm -r
+          RUN (bundle install --quiet --local --jobs 4 || bundle check) && find
         EOF
       end
 
       it "generates gem install commands" do
         File.write("Gemfile.lock", "  nokogiri (~> 1.2.3)\n      nokogiri (2.3.4)\n    nokogiri (3.4.5)")
-        call("<%= install_gem 'nokogiri' %>").should == %{RUN gem install -v 3.4.5 nokogiri && find /usr/local/lib/ruby/gems/*/gems/ -maxdepth 2 -name "ext" -o -name "test" -o -name "spec" | xargs rm -r}
+        call("<%= install_gem 'nokogiri' %>").should include %{RUN gem install -v 3.4.5 nokogiri && find /usr/local/lib/ruby/gems}
       end
 
       it "generates gem install command with args" do
         File.write("Gemfile.lock", "  nokogiri (~> 1.2.3)\n      nokogiri (2.3.4)\n    nokogiri (3.4.5)")
-        call("<%= install_gem 'nokogiri', '--foobar' %>").should == %{RUN gem install -v 3.4.5 nokogiri --foobar && find /usr/local/lib/ruby/gems/*/gems/ -maxdepth 2 -name "ext" -o -name "test" -o -name "spec" | xargs rm -r}
+        call("<%= install_gem 'nokogiri', '--foobar' %>").should include %{RUN gem install -v 3.4.5 nokogiri --foobar && find /usr/local/lib/ruby/gems}
       end
 
       it "fails when it cannot find a gem in the Gemfile.lock" do

@@ -19,8 +19,6 @@ module Dockerb
         ERB.new(code).result(binding)
       end
 
-      private
-
       def bundle
         <<-EOF.gsub(/^          /, "")
           ADD Gemfile /app/
@@ -36,9 +34,23 @@ module Dockerb
         "RUN gem install -v #{version} #{name}#{options} && #{delete_gem_junk}"
       end
 
-      # lower image size by not shipping test/spec/ext files
       def delete_gem_junk
-        %{find /usr/local/lib/ruby/gems/*/gems/ -maxdepth 2 -name "ext" -o -name "test" -o -name "spec" | xargs rm -r}
+        "#{delete_tests} && #{delete_build_files}"
+      end
+
+      private
+
+      def delete_tests
+        %{find #{gem_home}/ -maxdepth 2 -name "test" -o -name "spec" | xargs rm -r}
+      end
+
+      # deleting all of ext makes nokogiri + Nokogumbo install fail
+      def delete_build_files
+        %{find #{gem_home}/*/ext/ -maxdepth 1 -mindepth 1 -type d | xargs -I% make -C % clean}
+      end
+
+      def gem_home
+        "/usr/local/lib/ruby/gems/*/gems"
       end
     end
   end
