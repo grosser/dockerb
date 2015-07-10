@@ -47,7 +47,7 @@ module Dockerb
 
       # deleting all of ext makes nokogiri + Nokogumbo install fail
       def delete_build_files
-        %{find #{gem_home}/*/ext/ -maxdepth 1 -mindepth 1 -type d | xargs -I% make -C % clean}
+        %{find #{gem_home}/*/ext/ -maxdepth 1 -mindepth 1 -type d | xargs -L1 bash -c 'if [ -e $0/Makefile ]; then make -C $0 clean; fi}
       end
 
       def gem_home
