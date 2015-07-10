@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    dockerb (0.2.5)
+    dockerb (0.3.0)
 
 GEM
   remote: https://rubygems.org/
